@@ -14,7 +14,6 @@ class ReviewSchema(BaseModel):
 class CreateReviewSchema(BaseModel):
     comment:str|None
     rating:int
-    book_id:int
 
     class Config:
         orm_mode=True

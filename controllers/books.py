@@ -32,11 +32,14 @@ def create_book(new_book:CreateBookSchema,db:Session=Depends(get_db),user:UserMo
     db.refresh(book)
     return book
 
-@router.put("/books/{book_id}",response_model=BookSchema,status_code=204)
+@router.put("/books/{book_id}",response_model=BookSchema)
 def update_book(book_id:int,update:UpdateBookSchema,db:Session=Depends(get_db),user:UserModel=Depends(get_current_user)):
     book=db.query(BookModel).filter(BookModel.id==book_id).first()
     if not book:
         raise HTTPException(404,"Book not found")
+
+    if book.user_id!=user.id:#type:ignore
+            raise HTTPException(403,"Forbidden")
     book_data=update.model_dump(exclude_unset=True)
 
     for key,value in book_data.items():
@@ -49,7 +52,8 @@ def update_book(book_id:int,update:UpdateBookSchema,db:Session=Depends(get_db),u
 @router.delete("/teas/{book_id}")
 def delete_book(book_id:int,db:Session=Depends(get_db)):
     book=db.query(BookModel).filter(BookModel.id==book_id).first()
-
+    if book.user_id!=user.id:#type:ignore
+            raise HTTPException(403,"Forbidden")
     db.delete(book)
     db.commit()
     return None
