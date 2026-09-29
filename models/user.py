@@ -5,7 +5,8 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 import jwt
 from config.environment import JWT_SECRET
-
+from .review import ReviewModel
+from .book import BookModel
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class UserModel(BaseModel):
@@ -16,6 +17,9 @@ class UserModel(BaseModel):
     username = Column(String, unique=True)  # Each username must be unique
     email = Column(String, unique=True)  # Each email must be unique
     password = Column(String, nullable=True)
+    books=relationship("BookModel",back_populates="user")
+    reviews=relationship("ReviewModel",back_populates="user")
+
 
     def set_password(self, plain_txt_password: str):
         self.password = pwd_context.hash(plain_txt_password)

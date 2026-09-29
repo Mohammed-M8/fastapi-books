@@ -13,5 +13,6 @@ class BookModel(BaseModel):
     author=Column(String)
     user_id=Column(Integer,ForeignKey("users.id"),nullable=False)
     user=relationship("UserModel",back_populates="books")
+    reviews=relationship("ReviewModel",back_populates="book")
 
     
